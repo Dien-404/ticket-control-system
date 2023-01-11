@@ -1,11 +1,11 @@
 import React, { useState, useContext } from "react";
-import { Form, Input, Button, Popconfirm, Table } from "antd";
+import { Table, Popconfirm, Button } from "antd";
 import { RouterContext } from "../../router";
 
-export default function TicketBuy() {
+export default function MyTicket() {
     // 全局消息提醒
     const { messageShow } = useContext(RouterContext);
-    // 展示数据
+    // 数据源
     const [dataSource, setDataSource] = useState([
         {
             origin: "广州",
@@ -30,22 +30,15 @@ export default function TicketBuy() {
     const [currentPage, setCurrentPage] = useState(1);
     // 表格展示最大数
     const [tablePageSize, setTablePageSize] = useState(10);
-    // 处理表单提交(搜索功能)
-    const handleFormSubmit = (values) => {
-        setDataSource([]);
-        setDataSourceTotal();
-        console.log(values);
-    };
     // 处理页码变化(表格页码)
     const handlePageChange = (page, pageSize) => {
         setCurrentPage(page);
         setTablePageSize(pageSize);
     };
-    // 处理购买Button(购买车票)
-    const handleBuyTicket = (trainNumber) => {
-        messageShow("购买 " + trainNumber + " 车次车票成功", "info");
+    const handleDeleteTicket = (trainNumber) => {
+        messageShow("退票成功" + trainNumber, "info");
     };
-    // 渲染表格项
+    // 渲染列项
     const columns = [
         {
             title: "起点",
@@ -80,81 +73,36 @@ export default function TicketBuy() {
             align: "center",
         },
         {
-            title: "剩余车票",
-            dataIndex: "ticketNumber",
-            key: "ticketNumber",
-            align: "center",
-        },
-        {
             title: "操作",
             align: "center",
             render: (record) => (
                 <>
                     <Popconfirm
-                        title={`确定购买 ${record.trainNumber} 车次车票嘛？`}
+                        title={`确定退订 ${record.trainNumber} 车次车票嘛？`}
                         okText="确定"
                         cancelText="取消"
                         key={record.origin + record.trainNumber}
                         onConfirm={() => {
-                            handleBuyTicket(record.trainNumber);
+                            handleDeleteTicket(record.trainNumber);
                         }}
                     >
-                        <Button type="default">购买车票</Button>
+                        <Button type="default">退订车票</Button>
                     </Popconfirm>
                 </>
             ),
         },
     ];
     return (
-        <div className="flex flex-col">
-            <Form
-                onFinish={handleFormSubmit}
-                style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    flexWrap: "wrap",
-                }}
-            >
-                <Form.Item
-                    label="起点"
-                    name="origin"
-                    style={{ marginRight: "10px" }}
-                >
-                    <Input />
-                </Form.Item>
-                <Form.Item
-                    label="目的地"
-                    name="destination"
-                    style={{ marginRight: "10px" }}
-                >
-                    <Input />
-                </Form.Item>
-                <Form.Item
-                    label="车次号"
-                    name="trainNumber"
-                    style={{ marginRight: "10px" }}
-                >
-                    <Input />
-                </Form.Item>
-                <Form.Item>
-                    <Button type="default" htmlType="submit">
-                        查询
-                    </Button>
-                </Form.Item>
-            </Form>
-            <div className="">
-                <Table
-                    dataSource={dataSource}
-                    columns={columns}
-                    pagination={{
-                        current: currentPage,
-                        tablePageSize: tablePageSize,
-                        onChange: handlePageChange,
-                        total: dataSourceTotal,
-                        hideOnSinglePage: true,
-                    }}
-                ></Table>
-            </div>
-        </div>
+        <Table
+            dataSource={dataSource}
+            columns={columns}
+            pagination={{
+                current: currentPage,
+                tablePageSize: tablePageSize,
+                onChange: handlePageChange,
+                total: dataSourceTotal,
+                hideOnSinglePage: true,
+            }}
+        ></Table>
     );
 }

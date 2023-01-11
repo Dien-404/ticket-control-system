@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 
-export default function Menu() {
-    // 菜单项
-    const menuItem = ["购买车票", "我的车票"];
-    // 当前菜单项
-    const [currentMenuItem, setCurrentMenuItem] = useState(0);
+export default function Menu(props) {
     // 处理退出登录
     const handleLogout = () => {
         console.log("退出登录");
@@ -13,16 +9,16 @@ export default function Menu() {
         <>
             {/* 菜单渲染 */}
             <div>
-                {menuItem.map((item, index) => (
+                {props.menuItem.map((item, index) => (
                     <div
                         key={item + index}
                         className={`p-2 pl-3 select-none cursor-pointer duration-300 border-green-400 hover:border-r-4 ${
-                            index === currentMenuItem
+                            index === props.currentMenuItem
                                 ? "bg-green-400 text-white"
                                 : ""
                         }`}
                         onClick={() => {
-                            setCurrentMenuItem(index);
+                            props.setCurrentMenuItem(index);
                         }}
                     >
                         {item}

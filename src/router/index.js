@@ -61,7 +61,7 @@ export default function Router() {
         // const token = undefined;
         // if (!token) {
         //     messageShow("您暂未登录", "error");
-        //     navigate("/user/welcome");
+        //     navigate("/welcome");
         // }
     }, [location.pathname, userIsLogin]);
 
@@ -74,12 +74,11 @@ export default function Router() {
             {/* 路由配置 */}
             <Routes>
                 <Route path="/" element={<App />}>
-                    <Route index element={<Navigate to="user" />} />
+                    <Route index element={<Navigate to="welcome" />} />
+                    {/* 注册页面 */}
+                    <Route path="welcome" element={<Welcome />} />
                     {/* 用户页 */}
-                    <Route path="user">
-                        <Route index element={<User />}></Route>
-                        <Route path="welcome" element={<Welcome />} />
-                    </Route>
+                    <Route path="user" element={<User />} />
                     {/* 管理页面 */}
                     <Route path="admin" element={<Admin />} />
                 </Route>

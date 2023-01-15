@@ -3,7 +3,7 @@ import Nprogress from "nprogress";
 import "nprogress/nprogress.css";
 
 const instance = axios.create({
-    baseURL: "",
+    baseURL: "http://120.76.195.14:5555",
     timeout: 5000,
 });
 
@@ -12,7 +12,9 @@ instance.interceptors.request.use((config) => {
     // 进度条
     Nprogress.start();
     // token 配置请求头
-    // ...
+    if (localStorage.token) {
+        config.headers.Authorization = localStorage.getItem("token");
+    }
     return config;
 });
 
@@ -26,6 +28,10 @@ instance.interceptors.response.use((config) => {
 const REQUEST = {
     get: instance.get,
     post: instance.post,
+    delete: instance.delete,
 };
 
-export { REQUEST };
+const GETTRAINLIST = "/train";
+const DELETETRAINBYID = "/train";
+
+export { REQUEST, GETTRAINLIST, DELETETRAINBYID };

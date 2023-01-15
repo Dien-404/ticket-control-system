@@ -4,16 +4,23 @@ import { RouterContext } from "../../router/index";
 
 export default function EditTrainDialog(props) {
     const { messageShow } = useContext(RouterContext);
-
     // 解构
-    const { origin, destination, originTime, destinationTime, maxPeople } =
-        props.trainObjectEdit;
-    const [originEdit, setOriginEdit] = useState(origin);
-    const [destinationEdit, setDestinationEdit] = useState(destination);
-    const [originTimeEdit, setOriginTimeEdit] = useState(originTime);
-    const [destinationTimeEdit, setDestinationTimeEdit] =
-        useState(destinationTime);
-    const [maxPeopleEdit, setMaxPeopleEdit] = useState(maxPeople);
+    const {
+        trainId,
+        oriPosition,
+        destPosition,
+        oriTime,
+        destTime,
+        trainNumber,
+        maxPeople,
+        ticketLeft,
+    } = props.trainObjectEdit;
+    const [oriP, setOriP] = useState(oriPosition);
+    const [destP, setDestP] = useState(destPosition);
+    const [oriT, setOriT] = useState(oriTime);
+    const [destT, setDestT] = useState(destTime);
+    const [trainN, setTrainN] = useState(trainNumber);
+    const [maxPeo, setMaxPeo] = useState(maxPeople);
     // 处理对话框关闭
     const closeDialog = () => {
         props.close(false);
@@ -21,19 +28,18 @@ export default function EditTrainDialog(props) {
     // 处理表单提交
     const handleFormSubmit = () => {
         let newTrain = {
-            originEdit,
-            destinationEdit,
-            originTimeEdit,
-            destinationTimeEdit,
-            maxPeopleEdit,
+            oriP,
+            destP,
+            oriT,
+            destT,
+            maxPeo,
         };
         messageShow("修改车次成功");
         closeDialog();
-        console.log(newTrain);
     };
     return (
         <Modal
-            title="编辑车次"
+            title={`您正在修改列车id ${trainId}`}
             okText="确认修改"
             cancelText="取消"
             open={props.open}
@@ -44,49 +50,58 @@ export default function EditTrainDialog(props) {
             <Form title="修改车次信息">
                 <Form.Item label="始发站">
                     <Input
-                        value={originEdit}
+                        value={oriP}
                         onChange={(e) => {
-                            setOriginEdit(e.target.value);
+                            setOriP(e.target.value);
                         }}
                     />
                 </Form.Item>
                 <Form.Item label="到达站">
                     <Input
-                        value={destinationEdit}
+                        value={destP}
                         onChange={(e) => {
-                            setDestinationEdit(e.target.value);
+                            setDestP(e.target.value);
                         }}
                     />
                 </Form.Item>
                 <div className="flex flex-row">
                     <Form.Item label="发车时间">
                         <Input
-                            value={originTimeEdit}
+                            value={oriT}
                             onChange={(e) => {
-                                setOriginTimeEdit(e.target.value);
+                                setOriT(e.target.value);
                             }}
                         />
                     </Form.Item>
                     <Form.Item label="到达时间" style={{ marginLeft: "10px" }}>
                         <Input
-                            value={destinationTimeEdit}
+                            value={destT}
                             onChange={(e) => {
-                                setDestinationTimeEdit(e.target.value);
+                                setDestT(e.target.value);
                             }}
                         />
                     </Form.Item>
                 </div>
-                <Form.Item label="车次荷载人数">
-                    <InputNumber
-                        value={maxPeopleEdit}
-                        min={1}
-                        max={500}
-                        onChange={(value) => {
-                            setMaxPeopleEdit(value);
-                        }}
-                        style={{ marginBottom: "20px" }}
-                    />
-                </Form.Item>
+                <div className="flex flex-row">
+                    <Form.Item label="车次号">
+                        <Input
+                            value={trainN}
+                            onChange={(e) => {
+                                setTrainN(e.target.value);
+                            }}
+                        />
+                    </Form.Item>
+                    <Form.Item label="载客容量" style={{ marginLeft: "10px" }}>
+                        <InputNumber
+                            value={maxPeo}
+                            min={1}
+                            max={500}
+                            onChange={(value) => {
+                                setMaxPeo(value);
+                            }}
+                        />
+                    </Form.Item>
+                </div>
             </Form>
         </Modal>
     );

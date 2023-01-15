@@ -1,5 +1,5 @@
 import React, { useRef, useContext } from "react";
-import { Modal, Form, Input, InputNumber } from "antd";
+import { Modal, Form, Input, InputNumber, DatePicker } from "antd";
 import { RouterContext } from "../../router/index";
 
 export default function AddTrainDialog(props) {
@@ -15,9 +15,11 @@ export default function AddTrainDialog(props) {
         formRef.current
             .validateFields()
             .then((values) => {
-                console.log(values);
+                // 此处发送异步请求
+                // 判断是否成功
                 messageShow("添加车次成功", "info");
                 closeDialog();
+                console.log(values);
             })
             .catch((error) => {
                 error.errorFields.map((item) => {
@@ -38,14 +40,14 @@ export default function AddTrainDialog(props) {
             <Form ref={formRef}>
                 <Form.Item
                     label="始发站"
-                    name="origin"
+                    name="oriPosition"
                     rules={[{ required: true, message: "始发站不能为空" }]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item
                     label="到达站"
-                    name="destination"
+                    name="destPosition"
                     rules={[{ required: true, message: "到达站不能为空" }]}
                 >
                     <Input />
@@ -53,33 +55,43 @@ export default function AddTrainDialog(props) {
                 <div className="flex flex-row">
                     <Form.Item
                         label="发车时间"
-                        name="originTime"
+                        name="oriTime"
                         rules={[
                             { required: true, message: "发车时间不能为空" },
                         ]}
                     >
-                        <Input />
+                        <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
                     </Form.Item>
                     <Form.Item
                         label="到达时间"
-                        name="destinationTime"
+                        name="destTime"
                         style={{ marginLeft: "10px" }}
                         rules={[
                             { required: true, message: "到达时间不能为空" },
                         ]}
                     >
-                        <Input />
+                        <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
                     </Form.Item>
                 </div>
-                <Form.Item
-                    label="车次核载人数"
-                    name="maxPeople"
-                    rules={[
-                        { required: true, message: "车次核载人数不能为空" },
-                    ]}
-                >
-                    <InputNumber min={1} max={500} />
-                </Form.Item>
+                <div className="flex flex-row">
+                    <Form.Item
+                        label="车次号"
+                        name="trainNumber"
+                        rules={[{ required: true, message: "车次号不能为空" }]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        label="载客容量"
+                        name="maxPeople"
+                        style={{ marginLeft: "10px" }}
+                        rules={[
+                            { required: true, message: "载客容量不能为空" },
+                        ]}
+                    >
+                        <InputNumber min={1} max={500} />
+                    </Form.Item>
+                </div>
             </Form>
         </Modal>
     );

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Login from "./Login";
-import Regist from "./Regist";
+import Login from "../component/welcome/Login";
+import Regist from "../component/welcome/Regist";
 
 export default function Welcome() {
     // 是否展示登录组件

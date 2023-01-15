@@ -1,5 +1,6 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Table, Popconfirm, Button } from "antd";
+import { REQUEST, GETTRAINLIST } from "../../util/request";
 import { RouterContext } from "../../router";
 
 export default function MyTicket() {
@@ -8,20 +9,15 @@ export default function MyTicket() {
     // 数据源
     const [dataSource, setDataSource] = useState([
         {
-            origin: "广州",
-            originTime: "2023/1/11 8:00",
-            destination: "武汉",
-            destinationTime: "2023/1/11 10:30",
+            trainId: 1,
+            oriPosition: "广州",
+            oriTime: "2023/1/11 8:00",
+            destPosition: "武汉",
+            trainFrequency: "2023/1/11 10:30",
             trainNumber: "G61092",
-            ticketNumber: "19",
-        },
-        {
-            origin: "广州",
-            originTime: "2023/1/12 9:00",
-            destination: "东莞",
-            destinationTime: "2023/1/12 9:30",
-            trainNumber: "G61091",
-            ticketNumber: "5",
+            maxPeople: 300,
+            ticketLeft: "19",
+            passPositon: [],
         },
     ]);
     // 数据库数据最大数
@@ -32,63 +28,67 @@ export default function MyTicket() {
     const [tablePageSize, setTablePageSize] = useState(10);
     // 处理页码变化(表格页码)
     const handlePageChange = (page, pageSize) => {
-        setCurrentPage(page);
         setTablePageSize(pageSize);
+        setCurrentPage(page);
     };
+    // 处理退票
     const handleDeleteTicket = (trainNumber) => {
         messageShow("退票成功" + trainNumber, "info");
     };
+    // 处理获取车票信息
+    const loadTrainData = async () => {
+        const res = await REQUEST.post(GETTRAINLIST, {
+            page: currentPage,
+            pageSize: tablePageSize,
+        });
+        // if(res.status===200){
+        //     const [data,total]=res.data;
+        //     setDataSource(data);
+        //     setDataSourceTotal(total);
+        // }
+        console.log(res);
+    };
+    useEffect(() => {
+        loadTrainData();
+    }, []);
+
     // 渲染列项
     const columns = [
         {
-            title: "起点",
+            title: "始发站",
+            dataIndex: "oriPosition",
+
             align: "center",
-            render: (record) => (
-                <div
-                    className="flex flex-col items-center"
-                    key={record.origin + record.originTime}
-                >
-                    <span>{record.origin}</span>
-                    <span className="text-xs">{record.originTime}</span>
-                </div>
-            ),
         },
         {
-            title: "目的地",
+            title: "到达站",
+            dataIndex: "destPosition",
             align: "center",
-            render: (record) => (
-                <div
-                    className="flex flex-col items-center"
-                    key={record.destination + record.destinationTime}
-                >
-                    <span>{record.destination}</span>
-                    <span className="text-xs">{record.destinationTime}</span>
-                </div>
-            ),
         },
         {
             title: "车次号",
             dataIndex: "trainNumber",
-            key: "trainNumber",
+            align: "center",
+        },
+        {
+            title: "发车时间",
+            dataIndex: "oriTime",
             align: "center",
         },
         {
             title: "操作",
             align: "center",
             render: (record) => (
-                <>
-                    <Popconfirm
-                        title={`确定退订 ${record.trainNumber} 车次车票嘛？`}
-                        okText="确定"
-                        cancelText="取消"
-                        key={record.origin + record.trainNumber}
-                        onConfirm={() => {
-                            handleDeleteTicket(record.trainNumber);
-                        }}
-                    >
-                        <Button type="default">退订车票</Button>
-                    </Popconfirm>
-                </>
+                <Popconfirm
+                    title={`确定退订 ${record.trainNumber} 车次车票嘛？`}
+                    okText="确定"
+                    cancelText="取消"
+                    onConfirm={() => {
+                        handleDeleteTicket(record.trainNumber);
+                    }}
+                >
+                    <Button type="default">退订车票</Button>
+                </Popconfirm>
             ),
         },
     ];
@@ -96,6 +96,7 @@ export default function MyTicket() {
         <Table
             dataSource={dataSource}
             columns={columns}
+            rowKey="trainId"
             pagination={{
                 current: currentPage,
                 tablePageSize: tablePageSize,

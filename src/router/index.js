@@ -15,7 +15,7 @@ const User = lazy(() => {
     return import("../page/User");
 });
 const Welcome = lazy(() => {
-    return import("../component/user/Welcome");
+    return import("../page/Welcome");
 });
 const Admin = lazy(() => {
     return import("../page/Admin");
@@ -49,7 +49,7 @@ export default function Router() {
         }
     };
     // 已登录用户信息
-    const [userIsLogin, setUserIsLogin] = useState(undefined);
+    const [userIsLogin, setUserIsLogin] = useState({ email: "", auth: true });
 
     // 监听路由
     useEffect(() => {
@@ -57,13 +57,46 @@ export default function Router() {
         const path = location.pathname;
         // 当前登录用户
         const user = userIsLogin;
-        // token检测
-        // const token = undefined;
-        // if (!token) {
-        //     messageShow("您暂未登录", "error");
-        //     navigate("/welcome");
-        // }
-    }, [location.pathname, userIsLogin]);
+        if (user) {
+            if (path.startsWith("/admin") && !user.auth) {
+                // 非管理员进入管理员页面
+                navigate("/user");
+                messageShow("您不具有相关权限", "error");
+            } else if (path.startsWith("/user") && user.auth) {
+                // 管理员进入用户页面
+                navigate("/admin");
+                messageShow("您是管理员用户，正在为您跳转", "warning");
+            } else if (path.startsWith("/welcome") && user !== undefined) {
+                messageShow("您已登录", "warning");
+                if (user.auth) {
+                    // 管理员
+                    navigate("/admin");
+                } else {
+                    // 用户
+                    navigate("/user");
+                }
+            }
+        } else {
+            if (!path.startsWith("/welcome")) {
+                // 重定向
+                navigate("/welcome");
+                messageShow("您还未登录", "error");
+            }
+        }
+    }, [location.pathname]);
+
+    // 监听token
+    useEffect(() => {
+        (async () => {
+            const user = userIsLogin;
+            // 未登录且存在token
+            if (user === undefined && localStorage.getItem("token")) {
+                // token鉴权
+                // const res = await ...
+                // setUserIsLogin()
+            }
+        })();
+    }, [userIsLogin]);
 
     return (
         <RouterContext.Provider
